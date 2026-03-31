@@ -66,7 +66,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   throw new Error(errorMessage);
 }
 
-export function useAllSections() {
+export function useGetSections() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
