@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
+import { getPrismaClient } from "@/lib/prisma";
 
 const handler = NextAuth({
   providers: [
@@ -20,7 +20,7 @@ const handler = NextAuth({
           throw new Error("Invalid credentials");
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await getPrismaClient().user.findUnique({
           where: { email: credentials.email },
         });
 
