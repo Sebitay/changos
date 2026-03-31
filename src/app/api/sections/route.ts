@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
 import { getPrismaClient } from "@/lib/prisma";
 
 type CreateSectionBody = {
@@ -20,8 +21,26 @@ type UpdateSectionBody = {
   images?: string[];
 };
 
-export async function POST(request: Request) {
+async function ensureAuthenticated(request: NextRequest) {
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  if (!token) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  return null;
+}
+
+export async function POST(request: NextRequest) {
   try {
+    const authError = await ensureAuthenticated(request);
+    if (authError) {
+      return authError;
+    }
+
     const body = (await request.json()) as CreateSectionBody;
 
     const name = body.name?.trim();
@@ -114,8 +133,13 @@ export async function GET() {
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
+    const authError = await ensureAuthenticated(request);
+    if (authError) {
+      return authError;
+    }
+
     const body = (await request.json()) as UpdateSectionBody;
 
     const id = body.id;
@@ -188,8 +212,13 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
   try {
+    const authError = await ensureAuthenticated(request);
+    if (authError) {
+      return authError;
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
