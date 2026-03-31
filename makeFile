@@ -1,7 +1,10 @@
-.PHONY: up down
+.PHONY: up down clear-db
 
 up:
 	docker compose up -d && npm run dev
 
 down:
 	docker compose down
+
+clear-db:
+	docker compose down -v --remove-orphans
