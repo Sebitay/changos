@@ -1,5 +1,6 @@
-import { withAuth } from "next-auth/middleware";
+import { getToken } from "next-auth/jwt";
 import createMiddleware from "next-intl/middleware";
+import { NextRequest, NextResponse } from "next/server";
 import { locales } from "@/i18n/request";
 
 const intlMiddleware = createMiddleware({
@@ -7,34 +8,42 @@ const intlMiddleware = createMiddleware({
   defaultLocale: "es",
 });
 
-export default withAuth(
-  function middleware(req) {
-    return intlMiddleware(req);
-  },
-  {
-    callbacks: {
-      authorized: ({ req, token }) => {
-        const path = req.nextUrl.pathname;
+const DEFAULT_LOCALE = "es";
 
-        const isAdminRoute = new RegExp(
-          `^(/(${locales.join("|")}))?/admin`,
-        ).test(path);
-        const isLoginRoute = new RegExp(
-          `^(/(${locales.join("|")}))?/admin/login`,
-        ).test(path);
+function getLocaleFromPath(pathname: string) {
+  const pathParts = pathname.split("/");
+  const maybeLocale = pathParts[1];
 
-        if (isAdminRoute && !isLoginRoute) {
-          return !!token;
-        }
+  if (locales.includes(maybeLocale)) {
+    return maybeLocale;
+  }
 
-        return true;
-      },
-    },
-    pages: {
-      signIn: "/admin/login",
-    },
-  },
-);
+  return DEFAULT_LOCALE;
+}
+
+export default async function middleware(req: NextRequest) {
+  const path = req.nextUrl.pathname;
+
+  const isAdminRoute = new RegExp(`^(/(${locales.join("|")}))?/admin`).test(
+    path,
+  );
+  const isLoginRoute = new RegExp(
+    `^(/(${locales.join("|")}))?/admin/login`,
+  ).test(path);
+
+  if (isAdminRoute && !isLoginRoute) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (!token) {
+      const locale = getLocaleFromPath(path);
+      const loginUrl = new URL(`/${locale}/admin/login`, req.url);
+      loginUrl.searchParams.set("callbackUrl", `${path}${req.nextUrl.search}`);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  return intlMiddleware(req);
+}
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
