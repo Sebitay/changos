@@ -29,9 +29,21 @@ export async function POST(request: Request) {
     const content = body.content?.trim();
     const order = body.order;
     const show = body.show ?? true;
-    const images = body.images ?? [];
+    const rawImages = body.images;
+    if (
+      rawImages !== undefined &&
+      (!Array.isArray(rawImages) ||
+        !rawImages.every((img): img is string => typeof img === "string"))
+    ) {
+      return NextResponse.json(
+        { error: "images must be an array of strings" },
+        { status: 400 },
+      );
+    }
 
-    if (!name || !title || !content || !order) {
+    const images = rawImages ?? [];
+
+    if (!name || !title || !content || order === undefined) {
       return NextResponse.json(
         { error: "name, title, content and order are required" },
         { status: 400 },
@@ -86,6 +98,11 @@ export async function GET() {
   try {
     const sections = await getPrismaClient().section.findMany({
       orderBy: { order: "asc" },
+      include: {
+        images: {
+          orderBy: { order: "asc" },
+        },
+      },
     });
 
     return NextResponse.json(sections);
@@ -107,11 +124,23 @@ export async function PUT(request: Request) {
     const content = body.content?.trim();
     const order = body.order;
     const show = body.show ?? true;
-    const images = body.images ?? [];
-
-    if (!name || !title || !content || !order) {
+    const rawImages = body.images;
+    if (
+      rawImages !== undefined &&
+      (!Array.isArray(rawImages) ||
+        !rawImages.every((img): img is string => typeof img === "string"))
+    ) {
       return NextResponse.json(
-        { error: "name, title, content and order are required" },
+        { error: "images must be an array of strings" },
+        { status: 400 },
+      );
+    }
+
+    const images = rawImages ?? [];
+
+    if (!id || !name || !title || !content || order === undefined) {
+      return NextResponse.json(
+        { error: "id, name, title, content and order are required" },
         { status: 400 },
       );
     }
@@ -162,14 +191,14 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const name = searchParams.get("name");
+    const id = searchParams.get("id");
 
-    if (!name) {
-      return NextResponse.json({ error: "name is required" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "id is required" }, { status: 400 });
     }
 
     await getPrismaClient().section.delete({
-      where: { name },
+      where: { id },
     });
 
     return NextResponse.json({ message: "section deleted" });
