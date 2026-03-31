@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: camping_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: changosdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - camping_pgdata:/var/lib/postgresql/data
+
+volumes:
+  camping_pgdata:
