@@ -3,5 +3,12 @@
     "title": "Bienvenido a Camping Changos",
     "description": "El mejor camping de la 5ta región.",
     "theme": "Cambiar tema"
+  },
+
+  "LoginPage": {
+    "title": "Inicia sesión con tu cuenta",
+    "email": "Correo",
+    "password": "Contraseña",
+    "loginButton": "Iniciar sesión"
   }
 }

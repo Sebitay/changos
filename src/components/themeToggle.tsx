@@ -6,7 +6,7 @@ import { Sun, Moon } from "lucide-react";
 
 export function ThemeToggle() {
   const t = useTranslations("HomePage");
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       className="p-2 rounded-md hover:bg-accent transition-colors"
     >
       {resolvedTheme === "dark" ? (
