@@ -28,7 +28,7 @@ export type CreateSectionInput = {
   title: string;
   content: string;
   order: number;
-  show?: boolean;
+  show: boolean;
   images?: string[];
 };
 
@@ -38,8 +38,8 @@ export type UpdateSectionInput = {
   title: string;
   content: string;
   order: number;
-  show?: boolean;
-  images?: string[];
+  show: boolean;
+  images: string[];
 };
 
 type ApiErrorPayload = {
