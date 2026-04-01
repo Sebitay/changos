@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPrismaClient } from "@/lib/prisma";
-import { ensureAuthenticated } from "@/lib/utils";
+import { ensureAuthenticated } from "@/lib/auth";
 
 type CreateSectionBody = {
   name?: string;

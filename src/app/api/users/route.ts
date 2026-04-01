@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPrismaClient } from "@/lib/prisma";
-import { ensureAuthenticated } from "@/lib/utils";
+import { ensureAuthenticated } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
 type CreateUserBody = {
@@ -108,8 +108,8 @@ export async function PUT(request: NextRequest) {
     const body = (await request.json()) as UpdateUserBody;
 
     const id = body.id;
-    const email = body.email.trim();
-    const name = body.name.trim();
+    const email = body.email;
+    const name = body.name;
 
     if (!id || !email || !email.trim() || !name || !name.trim()) {
       return NextResponse.json(
@@ -119,14 +119,18 @@ export async function PUT(request: NextRequest) {
     }
 
     const existingUser = await getPrismaClient().user.findUnique({
-      where: { email: email.trim() },
+      where: { id },
     });
 
     if (!existingUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    if (existingUser.id !== id) {
+    const userWithEmail = await getPrismaClient().user.findUnique({
+      where: { email: email.trim() },
+    });
+
+    if (userWithEmail && userWithEmail.id !== id) {
       return NextResponse.json(
         { error: "Email already in use by another user" },
         { status: 400 },
