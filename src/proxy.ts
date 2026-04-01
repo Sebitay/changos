@@ -21,15 +21,25 @@ function getLocaleFromPath(pathname: string) {
   return DEFAULT_LOCALE;
 }
 
-export default async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
+function stripLocalePrefix(pathname: string) {
+  const parts = pathname.split("/");
+  const maybeLocale = parts[1];
 
-  const isAdminRoute = new RegExp(`^(/(${locales.join("|")}))?/admin`).test(
-    path,
-  );
-  const isLoginRoute = new RegExp(
-    `^(/(${locales.join("|")}))?/admin/login`,
-  ).test(path);
+  if (locales.includes(maybeLocale)) {
+    return `/${parts.slice(2).join("/")}`;
+  }
+
+  return pathname;
+}
+
+export default async function middleware(req: NextRequest) {
+  const intlResponse = intlMiddleware(req);
+  const path = req.nextUrl.pathname;
+  const normalizedPath = stripLocalePrefix(path);
+
+  const isAdminRoute =
+    normalizedPath === "/admin" || normalizedPath.startsWith("/admin/");
+  const isLoginRoute = normalizedPath === "/admin/login";
 
   if (isAdminRoute && !isLoginRoute) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -37,12 +47,11 @@ export default async function middleware(req: NextRequest) {
     if (!token) {
       const locale = getLocaleFromPath(path);
       const loginUrl = new URL(`/${locale}/admin/login`, req.url);
-      loginUrl.searchParams.set("callbackUrl", `${path}${req.nextUrl.search}`);
       return NextResponse.redirect(loginUrl);
     }
   }
 
-  return intlMiddleware(req);
+  return intlResponse;
 }
 
 export const config = {

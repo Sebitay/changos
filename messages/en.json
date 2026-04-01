@@ -7,8 +7,12 @@
 
   "LoginPage": {
     "title": "Login to your account",
+    "description": "Enter your credentials to access admin panel",
     "email": "Email",
+    "emailPlaceholder": "Enter your email",
     "password": "Password",
-    "loginButton": "Login"
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Login",
+    "errorMessage": "Invalid email or password"
   }
 }
