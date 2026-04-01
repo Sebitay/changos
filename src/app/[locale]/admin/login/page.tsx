@@ -61,7 +61,6 @@ export default function AdminLoginPage() {
           {t("loginButton")}
         </Button>
       </Card>
-      ß
     </div>
   );
 }
