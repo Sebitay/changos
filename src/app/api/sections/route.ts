@@ -1,6 +1,6 @@
-import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 import { getPrismaClient } from "@/lib/prisma";
+import { ensureAuthenticated } from "@/lib/auth";
 
 type CreateSectionBody = {
   name?: string;
@@ -20,19 +20,6 @@ type UpdateSectionBody = {
   show?: boolean;
   images?: string[];
 };
-
-async function ensureAuthenticated(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  if (!token) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
-
-  return null;
-}
 
 export async function POST(request: NextRequest) {
   try {
