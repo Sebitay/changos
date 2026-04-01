@@ -1,28 +1,27 @@
-"use client";
-import { useCallback, useState } from "react";
+import { useState, useCallback } from "react";
 import { parseApiResponse } from "@/lib/utils";
-import { CreateSectionInput, Section, UpdateSectionInput } from "@/app/types";
+import { User, CreateUserInput, UpdateSectionInput } from "@/app/types";
 
-const SECTIONS_API_URL = "/api/sections";
+const USERS_API_URL = "/api/users";
 
-export function useGetSections() {
-  const [sections, setSections] = useState<Section[]>([]);
+export function useGetUsers() {
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSections = useCallback(async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await parseApiResponse<Section[]>(
-        await fetch(SECTIONS_API_URL, { method: "GET" }),
+      const data = await parseApiResponse<User[]>(
+        await fetch(USERS_API_URL, { method: "GET" }),
       );
-      setSections(data);
+      setUsers(data);
       return data;
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to fetch sections";
+        err instanceof Error ? err.message : "Failed to fetch users";
       setError(message);
       throw err;
     } finally {
@@ -31,24 +30,24 @@ export function useGetSections() {
   }, []);
 
   return {
-    sections,
+    users,
     loading,
     error,
-    fetchSections,
+    fetchUsers,
   };
 }
 
-export function useCreateSection() {
+export function useCreateUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createSection = useCallback(async (payload: CreateSectionInput) => {
+  const createUser = useCallback(async (payload: CreateUserInput) => {
     setLoading(true);
     setError(null);
 
     try {
-      return await parseApiResponse<Section>(
-        await fetch(SECTIONS_API_URL, {
+      return await parseApiResponse<User>(
+        await fetch(USERS_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -56,7 +55,7 @@ export function useCreateSection() {
       );
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to create section";
+        err instanceof Error ? err.message : "Failed to create user";
       setError(message);
       throw err;
     } finally {
@@ -67,21 +66,21 @@ export function useCreateSection() {
   return {
     loading,
     error,
-    createSection,
+    createUser,
   };
 }
 
-export function useUpdateSection() {
+export function useUpdateUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateSection = useCallback(async (payload: UpdateSectionInput) => {
+  const updateUser = useCallback(async (payload: UpdateSectionInput) => {
     setLoading(true);
     setError(null);
 
     try {
-      return await parseApiResponse<Section>(
-        await fetch(SECTIONS_API_URL, {
+      return await parseApiResponse<User>(
+        await fetch(USERS_API_URL, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -89,7 +88,7 @@ export function useUpdateSection() {
       );
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to update section";
+        err instanceof Error ? err.message : "Failed to update user";
       setError(message);
       throw err;
     } finally {
@@ -100,27 +99,27 @@ export function useUpdateSection() {
   return {
     loading,
     error,
-    updateSection,
+    updateUser,
   };
 }
 
-export function useDeleteSection() {
+export function useDeleteUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deleteSection = useCallback(async (id: string) => {
+  const deleteUser = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      return await parseApiResponse<{ message: string }>(
-        await fetch(`${SECTIONS_API_URL}?id=${encodeURIComponent(id)}`, {
+      await parseApiResponse(
+        await fetch(`${USERS_API_URL}?id=${id}`, {
           method: "DELETE",
         }),
       );
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to delete section";
+        err instanceof Error ? err.message : "Failed to delete user";
       setError(message);
       throw err;
     } finally {
@@ -131,6 +130,6 @@ export function useDeleteSection() {
   return {
     loading,
     error,
-    deleteSection,
+    deleteUser,
   };
 }
