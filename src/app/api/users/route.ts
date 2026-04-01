@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPrismaClient } from "@/lib/prisma";
-import { ensureAuthenticated } from "@/app/api/auth/route";
+import { ensureAuthenticated } from "@/lib/utils";
 import bcrypt from "bcryptjs";
 
 type CreateUserBody = {
@@ -50,11 +50,11 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json()) as CreateUserBody;
 
-    const email = body.email.trim();
+    const email = body.email;
     const password = body.password;
-    const name = body.name.trim();
+    const name = body.name;
 
-    if (!email || !password || !name) {
+    if (!email || !email.trim() || !password || !name || !name.trim()) {
       return NextResponse.json(
         { error: "email, password and name are required" },
         { status: 400 },
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const existingUser = await getPrismaClient().user.findUnique({
-      where: { email },
+      where: { email: email.trim() },
     });
 
     if (existingUser) {
@@ -76,9 +76,16 @@ export async function POST(request: NextRequest) {
 
     const newUser = await getPrismaClient().user.create({
       data: {
-        email,
+        email: email.trim(),
         password: hashedPassword,
-        name,
+        name: name.trim(),
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -104,25 +111,33 @@ export async function PUT(request: NextRequest) {
     const email = body.email.trim();
     const name = body.name.trim();
 
-    if (!email || !name) {
+    if (!id || !email || !email.trim() || !name || !name.trim()) {
       return NextResponse.json(
-        { error: "email and name are required" },
+        { error: "id, email and name are required" },
         { status: 400 },
       );
     }
 
     const existingUser = await getPrismaClient().user.findUnique({
-      where: { id },
+      where: { email: email.trim() },
     });
 
     if (!existingUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    if (existingUser.id !== id) {
+      return NextResponse.json(
+        { error: "Email already in use by another user" },
+        { status: 400 },
+      );
+    }
+
     const updatedUser = await getPrismaClient().user.update({
       where: { id },
       data: {
-        name,
+        name: name.trim(),
+        email: email.trim(),
       },
       select: {
         id: true,

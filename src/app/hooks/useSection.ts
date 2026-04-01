@@ -1,7 +1,11 @@
 "use client";
 import { useCallback, useState } from "react";
 import { parseApiResponse } from "@/lib/utils";
-import { CreateSectionInput, Section, UpdateSectionInput } from "@/app/types";
+import type {
+  CreateSectionInput,
+  Section,
+  UpdateSectionInput,
+} from "@/app/types";
 
 const SECTIONS_API_URL = "/api/sections";
 

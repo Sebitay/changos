@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { parseApiResponse } from "@/lib/utils";
-import { User, CreateUserInput, UpdateSectionInput } from "@/app/types";
+import type { User, CreateUserInput, UpdateUserInput } from "@/app/types";
 
 const USERS_API_URL = "/api/users";
 
@@ -74,7 +74,7 @@ export function useUpdateUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateUser = useCallback(async (payload: UpdateSectionInput) => {
+  const updateUser = useCallback(async (payload: UpdateUserInput) => {
     setLoading(true);
     setError(null);
 
@@ -113,7 +113,7 @@ export function useDeleteUser() {
 
     try {
       await parseApiResponse(
-        await fetch(`${USERS_API_URL}?id=${id}`, {
+        await fetch(`${USERS_API_URL}?id=${encodeURIComponent(id)}`, {
           method: "DELETE",
         }),
       );
