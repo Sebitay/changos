@@ -9,6 +9,7 @@
     "title": "Login to your account",
     "email": "Email",
     "password": "Password",
-    "loginButton": "Login"
+    "loginButton": "Login",
+    "errorMessage": "Invalid email or password"
   }
 }

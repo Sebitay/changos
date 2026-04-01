@@ -6,9 +6,10 @@
   },
 
   "LoginPage": {
-    "title": "Inicia sesión con tu cuenta",
+    "title": "Inicia sesión",
     "email": "Correo",
     "password": "Contraseña",
-    "loginButton": "Iniciar sesión"
+    "loginButton": "Iniciar sesión",
+    "errorMessage": "Correo o contraseña inválidos"
   }
 }
