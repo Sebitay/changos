@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import {
   Card,
   CardHeader,
-  CardTitle,
   CardDescription,
   CardContent,
   CardFooter,
@@ -28,7 +27,6 @@ export default function AdminLoginPage() {
 
   async function handleLogin(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log("a");
 
     setError("");
     setIsLoading(true);
@@ -42,11 +40,9 @@ export default function AdminLoginPage() {
     setIsLoading(false);
 
     if (result?.error) {
-      console.log("error");
       setError(t("errorMessage"));
       return;
     }
-    console.log("success");
 
     router.push(`/${locale}/admin`);
     router.refresh();
