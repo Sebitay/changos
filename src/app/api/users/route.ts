@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json()) as CreateUserBody;
 
-    const email = body.email;
+    const email = body.email.trim();
     const password = body.password;
-    const name = body.name;
+    const name = body.name.trim();
 
     if (!email) {
       return NextResponse.json({ error: "emptyEmail" }, { status: 400 });
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     const existingUser = await getPrismaClient().user.findUnique({
-      where: { email: email.trim() },
+      where: { email: email },
     });
 
     if (existingUser) {
@@ -75,9 +75,9 @@ export async function POST(request: NextRequest) {
 
     const newUser = await getPrismaClient().user.create({
       data: {
-        email: email.trim(),
+        email: email,
         password: hashedPassword,
-        name: name.trim(),
+        name: name,
       },
       select: {
         id: true,
@@ -104,8 +104,8 @@ export async function PUT(request: NextRequest) {
     const body = (await request.json()) as UpdateUserBody;
 
     const id = body.id;
-    const email = body.email;
-    const name = body.name;
+    const email = body.email.trim();
+    const name = body.name.trim();
 
     if (!id) {
       return NextResponse.json({ error: "emptyId" }, { status: 400 });
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const userWithEmail = await getPrismaClient().user.findUnique({
-      where: { email: email.trim() },
+      where: { email: email },
     });
 
     if (userWithEmail && userWithEmail.id !== id) {
@@ -136,8 +136,8 @@ export async function PUT(request: NextRequest) {
     const updatedUser = await getPrismaClient().user.update({
       where: { id },
       data: {
-        name: name.trim(),
-        email: email.trim(),
+        name: name,
+        email: email,
       },
       select: {
         id: true,

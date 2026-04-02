@@ -23,9 +23,11 @@
     "actions": "Acciones",
     "edit": "Editar",
     "delete": "Eliminar",
+    "create": "Crear Usuario",
     "confirmDelete": "¿Estás seguro de que deseas eliminar este usuario?",
     "createdAt": "Creado",
-    "updatedAt": "Actualizado"
+    "updatedAt": "Actualizado",
+    "noContent": "No se encontraron usuarios"
   },
 
   "UserForm": {
@@ -35,20 +37,13 @@
     "descriptionEdit": "Actualiza los detalles del usuario",
     "successMessageCreate": "Usuario creado exitosamente",
     "successMessageEdit": "Usuario actualizado exitosamente",
+    "passwordMismatch": "Las contraseñas no coinciden",
     "name": "Nombre",
     "email": "Correo",
     "password": "Contraseña",
     "confirmPassword": "Confirmar Contraseña",
     "submitButton": "Guardar",
-    "cancelButton": "Cancelar",
-    "validation": {
-      "nameRequired": "El nombre es obligatorio",
-      "emailRequired": "El correo es obligatorio",
-      "emailInvalid": "El correo no es válido",
-      "passwordRequired": "La contraseña es obligatoria",
-      "confirmPasswordRequired": "Confirmar contraseña es obligatorio",
-      "passwordsMustMatch": "Las contraseñas deben coincidir"
-    }
+    "cancelButton": "Cancelar"
   },
 
   "UserApi": {
@@ -66,5 +61,25 @@
     "successCreated": "Usuario creado exitosamente",
     "successUpdated": "Usuario actualizado exitosamente",
     "successDeleted": "Usuario eliminado exitosamente"
+  },
+
+  "SectionApi": {
+    "emptyId": "El ID de la sección es obligatorio",
+    "emptyName": "El nombre de la sección es obligatorio",
+    "emptyTitle": "El título de la sección es obligatorio",
+    "emptyContent": "El contenido de la sección es obligatorio",
+    "emptyOrder": "El orden de la sección es obligatorio",
+    "unknownSection": "Sección no encontrada",
+    "takenName": "El nombre de la sección ya está en uso por otra sección",
+    "invalidOrder": "El orden de la sección debe ser un entero positivo",
+    "invalidImage": "Archivo de imagen inválido",
+    "error": "Ocurrió un error",
+    "getError": "Ocurrió un error al obtener la sección",
+    "createError": "Ocurrió un error al crear la sección",
+    "updateError": "Ocurrió un error al actualizar la sección",
+    "deleteError": "Ocurrió un error al eliminar la sección",
+    "successCreated": "Sección creada exitosamente",
+    "successUpdated": "Sección actualizada exitosamente",
+    "successDeleted": "Sección eliminada exitosamente"
   }
 }

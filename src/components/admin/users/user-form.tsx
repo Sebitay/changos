@@ -1,6 +1,5 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
@@ -12,6 +11,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { User, CreateUserInput, UpdateUserInput } from "@/app/types";
+import { toast } from "sonner";
 
 type CreateProps = {
   type: "create";
@@ -33,17 +33,26 @@ type Props = CreateProps | EditProps;
 
 export function UserForm(_props: Props) {
   const t = useTranslations("UserForm");
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
     if (_props.type === "create") {
+      const email = String(formData.get("email") ?? "");
+      const name = String(formData.get("name") ?? "");
+      const password = String(formData.get("password") ?? "");
+      const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+      if (password !== confirmPassword) {
+        toast.error(t("passwordMismatch"));
+        return;
+      }
+
       const payload: CreateUserInput = {
-        name: String(formData.get("name") ?? ""),
-        email: String(formData.get("email") ?? ""),
-        password: String(formData.get("password") ?? ""),
+        name,
+        email,
+        password,
       };
       await _props.onSubmit(payload);
       await _props.onSuccess?.();

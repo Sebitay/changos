@@ -23,9 +23,9 @@ type UpdateSectionBody = {
 
 export async function POST(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResponse = await ensureAuthenticated(request);
+    if (authResponse instanceof NextResponse) {
+      return authResponse;
     }
 
     const body = (await request.json()) as CreateSectionBody;
@@ -117,9 +117,9 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResponse = await ensureAuthenticated(request);
+    if (authResponse instanceof NextResponse) {
+      return authResponse;
     }
 
     const body = (await request.json()) as UpdateSectionBody;
@@ -159,10 +159,6 @@ export async function PUT(request: NextRequest) {
 
     if (order === undefined) {
       return NextResponse.json({ error: "emptyOrder" }, { status: 400 });
-    }
-
-    if (!Number.isInteger(order) || order < 0) {
-      return NextResponse.json({ error: "invalidOrder" }, { status: 400 });
     }
 
     if (!Number.isInteger(order) || order < 0) {
@@ -212,9 +208,9 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResponse = await ensureAuthenticated(request);
+    if (authResponse instanceof NextResponse) {
+      return authResponse;
     }
 
     const { searchParams } = new URL(request.url);

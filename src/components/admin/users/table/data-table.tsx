@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import {
   ColumnDef,
@@ -30,6 +31,8 @@ export function UserTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const t = useTranslations("AdminUser");
 
   return (
     <div className="overflow-hidden rounded-md border">
@@ -69,7 +72,7 @@ export function UserTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                {t("noContent")}
               </TableCell>
             </TableRow>
           )}
