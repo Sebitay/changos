@@ -58,5 +58,25 @@
     "successCreated": "User created successfully",
     "successUpdated": "User updated successfully",
     "successDeleted": "User deleted successfully"
+  },
+
+  "SectionApi": {
+    "emptyId": "Section ID is required",
+    "emptyName": "Section name is required",
+    "emptyTitle": "Section title is required",
+    "emptyContent": "Section content is required",
+    "emptyOrder": "Section order is required",
+    "unknownSection": "Section not found",
+    "takenName": "Section name is already in use by another section",
+    "invalidOrder": "Section order must be a positive integer",
+    "invalidImage": "Invalid image file",
+    "error": "An error occurred",
+    "getError": "An error occurred while fetching the section",
+    "createError": "An error occurred while creating the section",
+    "updateError": "An error occurred while updating the section",
+    "deleteError": "An error occurred while deleting the section",
+    "successCreated": "Section created successfully",
+    "successUpdated": "Section updated successfully",
+    "successDeleted": "Section deleted successfully"
   }
 }

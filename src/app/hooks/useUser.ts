@@ -1,31 +1,12 @@
 "use client";
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
-import { parseApiResponse, UnauthorizedError } from "@/lib/utils";
+import { useAuthErrorHandler } from "@/app/hooks/useAuthErrorHandler";
+import { parseApiResponse } from "@/lib/utils";
 import type { User, CreateUserInput, UpdateUserInput } from "@/app/types";
 import { toast } from "sonner";
 
 const USERS_API_URL = "/api/users";
-
-function useAuthErrorHandler() {
-  const router = useRouter();
-  const locale = useLocale();
-
-  const handleAuthError = useCallback(
-    (err: unknown) => {
-      if (err instanceof UnauthorizedError) {
-        router.push(`/${locale}/admin/login`);
-        return true;
-      }
-      return false;
-    },
-    [router, locale],
-  );
-
-  return { handleAuthError };
-}
 
 export function useGetUsers() {
   const [users, setUsers] = useState<User[]>([]);
