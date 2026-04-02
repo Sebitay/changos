@@ -17,9 +17,9 @@ type UpdateUserBody = {
 
 export async function GET(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResult = await ensureAuthenticated(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
     const users = await getPrismaClient().user.findMany({
@@ -34,51 +34,50 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(users);
   } catch (error) {
-    return NextResponse.json(
-      { error: "An error occurred while fetching users" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "getError" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResult = await ensureAuthenticated(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
     const body = (await request.json()) as CreateUserBody;
 
-    const email = body.email;
+    const email = body.email.trim();
     const password = body.password;
-    const name = body.name;
+    const name = body.name.trim();
 
-    if (!email || !email.trim() || !password || !name || !name.trim()) {
-      return NextResponse.json(
-        { error: "email, password and name are required" },
-        { status: 400 },
-      );
+    if (!email) {
+      return NextResponse.json({ error: "emptyEmail" }, { status: 400 });
+    }
+
+    if (!password) {
+      return NextResponse.json({ error: "emptyPassword" }, { status: 400 });
+    }
+
+    if (!name) {
+      return NextResponse.json({ error: "emptyName" }, { status: 400 });
     }
 
     const existingUser = await getPrismaClient().user.findUnique({
-      where: { email: email.trim() },
+      where: { email: email },
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already in use" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "takenEmail" }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await getPrismaClient().user.create({
       data: {
-        email: email.trim(),
+        email: email,
         password: hashedPassword,
-        name: name.trim(),
+        name: name,
       },
       select: {
         id: true,
@@ -91,31 +90,31 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "An error occurred while creating the user" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "createError" }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResult = await ensureAuthenticated(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
     const body = (await request.json()) as UpdateUserBody;
 
     const id = body.id;
-    const email = body.email;
-    const name = body.name;
+    const email = body.email.trim();
+    const name = body.name.trim();
 
-    if (!id || !email || !email.trim() || !name || !name.trim()) {
-      return NextResponse.json(
-        { error: "id, email and name are required" },
-        { status: 400 },
-      );
+    if (!id) {
+      return NextResponse.json({ error: "emptyId" }, { status: 400 });
+    }
+    if (!email) {
+      return NextResponse.json({ error: "emptyEmail" }, { status: 400 });
+    }
+    if (!name) {
+      return NextResponse.json({ error: "emptyName" }, { status: 400 });
     }
 
     const existingUser = await getPrismaClient().user.findUnique({
@@ -123,25 +122,22 @@ export async function PUT(request: NextRequest) {
     });
 
     if (!existingUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "unknownUser" }, { status: 404 });
     }
 
     const userWithEmail = await getPrismaClient().user.findUnique({
-      where: { email: email.trim() },
+      where: { email: email },
     });
 
     if (userWithEmail && userWithEmail.id !== id) {
-      return NextResponse.json(
-        { error: "Email already in use by another user" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "takenEmail" }, { status: 400 });
     }
 
     const updatedUser = await getPrismaClient().user.update({
       where: { id },
       data: {
-        name: name.trim(),
-        email: email.trim(),
+        name: name,
+        email: email,
       },
       select: {
         id: true,
@@ -152,34 +148,31 @@ export async function PUT(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(updatedUser);
+    return NextResponse.json(updatedUser, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "An error occurred while updating the user" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "updateError" }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    const authError = await ensureAuthenticated(request);
-    if (authError) {
-      return authError;
+    const authResult = await ensureAuthenticated(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "id is required" }, { status: 400 });
+      return NextResponse.json({ error: "emptyId" }, { status: 400 });
     }
 
     await getPrismaClient().user.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: "User deleted" });
+    return NextResponse.json({ message: "successDeleted" }, { status: 200 });
   } catch (error: unknown) {
     if (
       typeof error === "object" &&
@@ -187,12 +180,9 @@ export async function DELETE(request: NextRequest) {
       "code" in error &&
       error.code === "P2025"
     ) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "unknownUser" }, { status: 404 });
     }
 
-    return NextResponse.json(
-      { error: "An error occurred while deleting the user" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "deleteError" }, { status: 500 });
   }
 }

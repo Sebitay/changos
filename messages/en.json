@@ -14,5 +14,72 @@
     "passwordPlaceholder": "Enter your password",
     "loginButton": "Login",
     "errorMessage": "Invalid email or password"
+  },
+
+  "AdminUser": {
+    "id": "ID",
+    "name": "Name",
+    "email": "Email",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create User",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "noContent": "No users found"
+  },
+
+  "UserForm": {
+    "titleCreate": "Create User",
+    "titleEdit": "Edit User",
+    "descriptionCreate": "Fill in the details to create a new user",
+    "descriptionEdit": "Update the user details",
+    "successMessageCreate": "User created successfully",
+    "successMessageEdit": "User updated successfully",
+    "passwordMismatch": "Passwords do not match",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submitButton": "Save",
+    "cancelButton": "Cancel"
+  },
+
+  "UserApi": {
+    "emptyId": "User ID is required",
+    "emptyName": "User name is required",
+    "emptyEmail": "User email is required",
+    "emptyPassword": "User password is required",
+    "takenEmail": "Email is already in use by another user",
+    "unknownUser": "User not found",
+    "error": "An error occurred",
+    "getError": "An error occurred while fetching the user",
+    "createError": "An error occurred while creating the user",
+    "updateError": "An error occurred while updating the user",
+    "deleteError": "An error occurred while deleting the user",
+    "successCreated": "User created successfully",
+    "successUpdated": "User updated successfully",
+    "successDeleted": "User deleted successfully"
+  },
+
+  "SectionApi": {
+    "emptyId": "Section ID is required",
+    "emptyName": "Section name is required",
+    "emptyTitle": "Section title is required",
+    "emptyContent": "Section content is required",
+    "emptyOrder": "Section order is required",
+    "unknownSection": "Section not found",
+    "takenName": "Section name is already in use by another section",
+    "invalidOrder": "Section order must be a positive integer",
+    "invalidImage": "Invalid image file",
+    "error": "An error occurred",
+    "getError": "An error occurred while fetching the section",
+    "createError": "An error occurred while creating the section",
+    "updateError": "An error occurred while updating the section",
+    "deleteError": "An error occurred while deleting the section",
+    "successCreated": "Section created successfully",
+    "successUpdated": "Section updated successfully",
+    "successDeleted": "Section deleted successfully"
   }
 }

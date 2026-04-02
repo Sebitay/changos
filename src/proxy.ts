@@ -1,25 +1,12 @@
-import { getToken } from "next-auth/jwt";
 import createMiddleware from "next-intl/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { locales } from "@/i18n/request";
+import { ensureAuthenticated } from "@/lib/auth";
 
 const intlMiddleware = createMiddleware({
   locales: locales,
   defaultLocale: "es",
 });
-
-const DEFAULT_LOCALE = "es";
-
-function getLocaleFromPath(pathname: string) {
-  const pathParts = pathname.split("/");
-  const maybeLocale = pathParts[1];
-
-  if (locales.includes(maybeLocale)) {
-    return maybeLocale;
-  }
-
-  return DEFAULT_LOCALE;
-}
 
 function stripLocalePrefix(pathname: string) {
   const parts = pathname.split("/");
@@ -42,12 +29,9 @@ export default async function middleware(req: NextRequest) {
   const isLoginRoute = normalizedPath === "/admin/login";
 
   if (isAdminRoute && !isLoginRoute) {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-    if (!token) {
-      const locale = getLocaleFromPath(path);
-      const loginUrl = new URL(`/${locale}/admin/login`, req.url);
-      return NextResponse.redirect(loginUrl);
+    const authResult = await ensureAuthenticated(req);
+    if (authResult instanceof Response) {
+      return authResult;
     }
   }
 
