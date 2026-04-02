@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { locales } from "@/i18n/request";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,6 +38,7 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster richColors position="top-right" />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

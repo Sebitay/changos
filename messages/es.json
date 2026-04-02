@@ -14,5 +14,57 @@
     "passwordPlaceholder": "Ingresa tu contraseña",
     "loginButton": "Iniciar sesión",
     "errorMessage": "Correo o contraseña inválidos"
+  },
+
+  "AdminUser": {
+    "id": "ID",
+    "name": "Nombre",
+    "email": "Correo",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar este usuario?",
+    "createdAt": "Creado",
+    "updatedAt": "Actualizado"
+  },
+
+  "UserForm": {
+    "titleCreate": "Crear Usuario",
+    "titleEdit": "Editar Usuario",
+    "descriptionCreate": "Completa los detalles para crear un nuevo usuario",
+    "descriptionEdit": "Actualiza los detalles del usuario",
+    "successMessageCreate": "Usuario creado exitosamente",
+    "successMessageEdit": "Usuario actualizado exitosamente",
+    "name": "Nombre",
+    "email": "Correo",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "submitButton": "Guardar",
+    "cancelButton": "Cancelar",
+    "validation": {
+      "nameRequired": "El nombre es obligatorio",
+      "emailRequired": "El correo es obligatorio",
+      "emailInvalid": "El correo no es válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "confirmPasswordRequired": "Confirmar contraseña es obligatorio",
+      "passwordsMustMatch": "Las contraseñas deben coincidir"
+    }
+  },
+
+  "UserApi": {
+    "emptyId": "El ID del usuario es obligatorio",
+    "emptyName": "El nombre del usuario es obligatorio",
+    "emptyEmail": "El correo del usuario es obligatorio",
+    "emptyPassword": "La contraseña del usuario es obligatoria",
+    "takenEmail": "El correo ya está en uso por otro usuario",
+    "unknownUser": "Usuario no encontrado",
+    "error": "Ocurrió un error",
+    "getError": "Ocurrió un error al obtener el usuario",
+    "createError": "Ocurrió un error al crear el usuario",
+    "updateError": "Ocurrió un error al actualizar el usuario",
+    "deleteError": "Ocurrió un error al eliminar el usuario",
+    "successCreated": "Usuario creado exitosamente",
+    "successUpdated": "Usuario actualizado exitosamente",
+    "successDeleted": "Usuario eliminado exitosamente"
   }
 }

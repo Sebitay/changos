@@ -3,22 +3,22 @@ import { getPrismaClient } from "@/lib/prisma";
 import { ensureAuthenticated } from "@/lib/auth";
 
 type CreateSectionBody = {
-  name?: string;
-  title?: string;
-  content?: string;
-  order?: number;
+  name: string;
+  title: string;
+  content: string;
+  order: number;
   show?: boolean;
-  images?: string[];
+  images: string[];
 };
 
 type UpdateSectionBody = {
   id: string;
-  name?: string;
-  title?: string;
-  content?: string;
-  order?: number;
-  show?: boolean;
-  images?: string[];
+  name: string;
+  title: string;
+  content: string;
+  order: number;
+  show: boolean;
+  images: string[];
 };
 
 export async function POST(request: NextRequest) {
@@ -30,37 +30,41 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json()) as CreateSectionBody;
 
-    const name = body.name?.trim();
-    const title = body.title?.trim();
-    const content = body.content?.trim();
+    const name = body.name.trim();
+    const title = body.title.trim();
+    const content = body.content.trim();
     const order = body.order;
     const show = body.show ?? true;
     const rawImages = body.images;
+
     if (
       rawImages !== undefined &&
       (!Array.isArray(rawImages) ||
         !rawImages.every((img): img is string => typeof img === "string"))
     ) {
-      return NextResponse.json(
-        { error: "images must be an array of strings" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "invalidImage" }, { status: 400 });
     }
 
     const images = rawImages ?? [];
 
-    if (!name || !title || !content || order === undefined) {
-      return NextResponse.json(
-        { error: "name, title, content and order are required" },
-        { status: 400 },
-      );
+    if (!name) {
+      return NextResponse.json({ error: "emptyName" }, { status: 400 });
+    }
+
+    if (!title) {
+      return NextResponse.json({ error: "emptyTitle" }, { status: 400 });
+    }
+
+    if (!content) {
+      return NextResponse.json({ error: "emptyContent" }, { status: 400 });
+    }
+
+    if (order === undefined) {
+      return NextResponse.json({ error: "emptyOrder" }, { status: 400 });
     }
 
     if (!Number.isInteger(order) || order < 0) {
-      return NextResponse.json(
-        { error: "order is required and must be an integer >= 0" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "invalidOrder" }, { status: 400 });
     }
 
     const section = await getPrismaClient().section.create({
@@ -87,16 +91,10 @@ export async function POST(request: NextRequest) {
       "code" in error &&
       error.code === "P2002"
     ) {
-      return NextResponse.json(
-        { error: "section name already exists" },
-        { status: 409 },
-      );
+      return NextResponse.json({ error: "takenName" }, { status: 409 });
     }
 
-    return NextResponse.json(
-      { error: "failed to create section" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "createError" }, { status: 500 });
   }
 }
 
@@ -111,12 +109,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(sections);
+    return NextResponse.json(sections, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "failed to fetch sections" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "getError" }, { status: 500 });
   }
 }
 
@@ -130,9 +125,9 @@ export async function PUT(request: NextRequest) {
     const body = (await request.json()) as UpdateSectionBody;
 
     const id = body.id;
-    const name = body.name?.trim();
-    const title = body.title?.trim();
-    const content = body.content?.trim();
+    const name = body.name.trim();
+    const title = body.title.trim();
+    const content = body.content.trim();
     const order = body.order;
     const show = body.show ?? true;
     const rawImages = body.images;
@@ -141,26 +136,37 @@ export async function PUT(request: NextRequest) {
       (!Array.isArray(rawImages) ||
         !rawImages.every((img): img is string => typeof img === "string"))
     ) {
-      return NextResponse.json(
-        { error: "images must be an array of strings" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "invalidImage" }, { status: 400 });
     }
 
     const images = rawImages ?? [];
 
-    if (!id || !name || !title || !content || order === undefined) {
-      return NextResponse.json(
-        { error: "id, name, title, content and order are required" },
-        { status: 400 },
-      );
+    if (!id) {
+      return NextResponse.json({ error: "emptyId" }, { status: 400 });
+    }
+
+    if (!name) {
+      return NextResponse.json({ error: "emptyName" }, { status: 400 });
+    }
+
+    if (!title) {
+      return NextResponse.json({ error: "emptyTitle" }, { status: 400 });
+    }
+
+    if (!content) {
+      return NextResponse.json({ error: "emptyContent" }, { status: 400 });
+    }
+
+    if (order === undefined) {
+      return NextResponse.json({ error: "emptyOrder" }, { status: 400 });
     }
 
     if (!Number.isInteger(order) || order < 0) {
-      return NextResponse.json(
-        { error: "order is required and must be an integer >= 0" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "invalidOrder" }, { status: 400 });
+    }
+
+    if (!Number.isInteger(order) || order < 0) {
+      return NextResponse.json({ error: "invalidOrder" }, { status: 400 });
     }
 
     const section = await getPrismaClient().section.update({
@@ -181,7 +187,7 @@ export async function PUT(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(section);
+    return NextResponse.json(section, { status: 200 });
   } catch (error: unknown) {
     if (
       typeof error === "object" &&
@@ -189,13 +195,18 @@ export async function PUT(request: NextRequest) {
       "code" in error &&
       error.code === "P2025"
     ) {
-      return NextResponse.json({ error: "section not found" }, { status: 404 });
+      return NextResponse.json({ error: "unknownSection" }, { status: 404 });
+    }
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2002"
+    ) {
+      return NextResponse.json({ error: "takenName" }, { status: 409 });
     }
 
-    return NextResponse.json(
-      { error: "failed to update section" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "updateError" }, { status: 500 });
   }
 }
 
@@ -210,14 +221,14 @@ export async function DELETE(request: NextRequest) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "id is required" }, { status: 400 });
+      return NextResponse.json({ error: "emptyId" }, { status: 400 });
     }
 
     await getPrismaClient().section.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: "section deleted" });
+    return NextResponse.json({ message: "successDeleted" });
   } catch (error: unknown) {
     if (
       typeof error === "object" &&
@@ -225,12 +236,9 @@ export async function DELETE(request: NextRequest) {
       "code" in error &&
       error.code === "P2025"
     ) {
-      return NextResponse.json({ error: "section not found" }, { status: 404 });
+      return NextResponse.json({ error: "unknownSection" }, { status: 404 });
     }
 
-    return NextResponse.json(
-      { error: "failed to delete section" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "deleteError" }, { status: 500 });
   }
 }
